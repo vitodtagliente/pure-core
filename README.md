@@ -1,2 +1,3 @@
-# pure-core
-The Pure Core Component
+# Pure Core Component
+
+Main framework core functionality. 

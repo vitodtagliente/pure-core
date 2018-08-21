@@ -1,0 +1,28 @@
+{
+    "name": "vitodtagliente/pure-core",
+    "description": "The Pure Core Component",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Vito Domenico Tagliente",
+            "email": "vitodomenicotagliente@gmail.com"
+        }
+    ],
+    "require": {
+        "vitodtagliente/pure-routing": "dev-master",
+        "vitodtagliente/pure-orm": "dev-master",
+        "vitodtagliente/pure-template": "dev-master"
+    },
+    "autoload": {
+        "psr-4": {
+            "Pure\\": ""
+        },
+        "files": ["dev.api.php"]
+
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev"
+}
