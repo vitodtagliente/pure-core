@@ -10,8 +10,8 @@
 
 function base_path($path = null){
 	if(isset($path))
-		return __DIR__ . '/' . trim($path, '/');
-	return __DIR__;
+		return getcwd() . '/' . trim($path, '/');
+	return getcwd();
 }
 
 // return a config variable
