@@ -16,7 +16,7 @@ function base_path($path = null){
 
 // return a config variable
 // example: $app_title = config('app.title');
-// where app is the file root/app/config/app.ini
+// where app is the file root/app/config/app.php
 // and title is a variable inside this ini file
 
 function config($option, $path = null){
@@ -90,7 +90,7 @@ function include_directory($directory, $extension = '.php') {
 
 // return the application
 function app(){
-	return Pure\Application();
+	return Pure\Application::main();
 }
 
 // return the router

@@ -10,7 +10,7 @@
 
 namespace Pure;
 
-abstract class ApplicationService
+abstract class Service
 {
 	abstract function boot();
 

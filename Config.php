@@ -8,22 +8,27 @@
 	Come funziona?
 	Si tratta di una classe statica avente un solo metodo, get($option_name).
 	$option_name deve essere formattato nel seguente metodo:
-		nome_file_ini.nome_opzione
-	I file ini, alla prima richiesta di caricamento, vengono salvati in memoria,
+		nome_file_php.nome_opzione
+	I file, alla prima richiesta di caricamento, vengono salvati in memoria,
 	così da evitare nuove letture da file ai successivi accessi al medesimo
 	set di configurazioni.
 
 	Consideriamo un esempio:
-	il file path/app/Config/app.ini contiene diverse opzioni
-	----------- app.ini -----------
-	one = 1
-	key = 'stringa'
+	il file path/app/Config/app.php contiene diverse opzioni
+
+	----------- app.php -----------
+	return array(
+		'one' => 1,
+		'key' => 'stringa'
+	);
 	-------------------------------
 
-	Per accedere alle opzioni del file app.ini basta richiamare la funzione get
+	Per accedere alle opzioni del file app.php basta richiamare la funzione get
 	nel modo seguente:
 	$one = Pure\Config::get('app.one');
 	$key = Pure\Config::get('app.key');
+
+	In caso di errore verrà ritornato il valore null.
 */
 
 namespace Pure;
@@ -69,15 +74,22 @@ class Config
 			if(!array_key_exists($config_name, self::$configs))
 			{
 				// check if the file exists
-				$filename = $config_name . '.ini';
+				$filename = $config_name . '.php';
 				if(file_exists($filename))
-					self::$configs[$config_name] = parse_ini_file($filename);
-				else return null;
+				{
+					$file_configs = include($filename);
+					if(isset($file_configs) && is_array($file_configs))
+					{
+						self::$configs[$config_name] = $file_configs;
+					}
+				}
 			}
 
 			// return the option
 			if(array_key_exists($parts[1], self::$configs[$config_name]))
+			{
 				return self::$configs[$config_name][$parts[1]];
+			}
 		}
 		return null;
 	}

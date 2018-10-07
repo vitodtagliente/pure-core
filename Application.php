@@ -9,15 +9,15 @@
     All'avvio, vengono svolte diverse operazioni:
     - Vengono caricati i servizi:
       Per essere caricati, occorre registrare le classi di tali all'interno del
-      file di configurazione 'app.ini'. I servizi permettono di customizzare
+      file di configurazione 'app.php'. I servizi permettono di customizzare
       il comportamento dell'applicazione. All'interno dei servizi, è possibile
       definire path alternativi da cui caricare le routes, le view e soprattutto
       è possibile registrare le classi schema dall'esterno della configurazione
-      di default definita nel file 'app.ini'.
-    - Vengono caricati gli schema caricando le classi dal file app.ini.
+      di default definita nel file 'app.php'.
+    - Vengono caricati gli schema caricando le classi dal file app.php.
       In alternativa, è possibile registrare le classi anche a livello di codice
       attraverso il metodo registerSchema('Namespace\Schemas\SchemaName');
-    - Carica le rotte dalla direcotry di default definita nel file app.ini e da
+    - Carica le rotte dalla direcotry di default definita nel file app.php e da
       quelle registrate tramite il metodo loadRoutesFrom(path);
     - Carica le viste suddivise per namespace.
 
@@ -31,10 +31,49 @@ use Pure\Routing\Router;
 
 class Application {
 
+    // ----------------------------------
+    // core based application setup
+    // This lets the framework to be updated 
+    // without changing the users pure application 
+    // base code
+
+    public static function execute($app_directory, $shell_mode = false, $argv = array())
+    {
+        // set the base config directory
+        $app_directory = rtrim($app_directory, '/');
+        Config::path($app_directory . '/app/Config');
+
+        // start the session
+        Session::start(Config::get('app.security_string'));
+
+        // configure the auth interface
+        Auth::$class_name = Config::get('app.auth_class_name');
+
+        // prepare the database
+        ORM\Database::prepare(
+            Config::get('database.type'),              // connector type
+            Config::get('database.hostname'),          // hostname
+            Config::get('database.name'),              // database
+            Config::get('database.username'),          // username
+            Config::get('database.password')           // password
+        );
+        // activate/deactivate debug mode
+        ORM\Database::main()->debug = config('app.debug_database_queries');
+
+        // run the application
+        self::main()->run($shell_mode, $argv);
+
+        // close the database connection
+        ORM\Database::end();
+    }
+
+    // ----------------------------------
+
+    // singleton pattern
     private static $instance = null;
 
     private function __construct(){}
-    public function __destruct(){}
+    private function __destruct(){}
 
     // singleton pattern
     public static function main(){
@@ -61,6 +100,8 @@ class Application {
     public function run($shell_mode = false, $argv = array()){
         // run the application only one time
         if($this->running) return;
+
+        // update the application state
         $this->running = true;
 
         // boot the application and services
@@ -156,13 +197,13 @@ class Application {
     {
         // load service classes by the config, instantiate here
         $services_classes = config('app.services');
-        if(!empty($services_classes))
+        if(!empty($services_classes) && is_array($services_classes))
         {
             foreach($services_classes as $service_class)
             {
                 if(class_exists($service_class)){
                     $service = new $service_class;
-                    if($service && is_a($service, '\Pure\ApplicationService'))
+                    if($service && is_a($service, '\Pure\Service'))
                     {
                         array_push($this->services, $service);
                     }
@@ -198,11 +239,11 @@ class Application {
     }
 
     private function loadSchemas(){
-        // load schemas from app.ini and from registered classes
+        // load schemas from app.php and from registered classes
         $schema_classes = array_merge($this->schemas, Config::get('app.schemas'));
 
         // $schema_classes should be an array
-        if(empty($schema_classes))
+        if(empty($schema_classes) || !is_array($schema_classes))
             return;
 
         foreach($schema_classes as $schema_class){
