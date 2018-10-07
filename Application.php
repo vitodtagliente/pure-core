@@ -73,7 +73,7 @@ class Application {
     private static $instance = null;
 
     private function __construct(){}
-    private function __destruct(){}
+    public function __destruct(){}
 
     // singleton pattern
     public static function main(){

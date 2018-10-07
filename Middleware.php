@@ -6,7 +6,7 @@
 
 namespace Pure;
 
-abstract class Middleware
+abstract class Middleware extends Routing\Middleware
 {
 
 }
