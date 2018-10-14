@@ -246,20 +246,14 @@ class Application {
         if(empty($schema_classes) || !is_array($schema_classes))
             return;
 
-        foreach($schema_classes as $schema_class){
-            if(!empty($schema_class) && class_exists($schema_class))
-    		{
-                $schema = new $schema_class;
-                if($schema && is_a($schema, '\Pure\SchemaHandler'))
-                {
-                    $success = call_user_func(array($schema, 'create'));
-                    if(!$success)
-                    {
-                        dd("Schema error");
-                        // TODO: error management
-                    }
-                }
-    		}
+        foreach($schema_classes as $schema_class)
+        {
+            $success = ORM\Schema::create($schema_class);
+            if(!$success)
+            {
+                dd("Schema error");
+                // TODO: error management
+            }
         }
     }
 
