@@ -58,7 +58,7 @@ class Application {
             Config::get('database.password')           // password
         );
         // activate/deactivate debug mode
-        ORM\Database::main()->debug = config('app.debug_database_queries');
+        ORM\Database::main()->error_reporting(config('app.debug_database_queries'));
 
         // run the application
         self::main()->run($shell_mode, $argv);
