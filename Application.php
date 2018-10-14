@@ -249,7 +249,7 @@ class Application {
         foreach($schema_classes as $schema_class)
         {
             $success = ORM\Schema::create($schema_class);
-            if(!$success)
+            if(!$success && !ORM\Schema::exists($schema_class))
             {
                 dd("Schema error");
                 // TODO: error management
