@@ -8,11 +8,6 @@ namespace Pure;
 
 abstract class Model extends ORM\Model {
 
-	public static function seed()
-	{
-
-	}
-
 }
 
 ?>

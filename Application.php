@@ -250,11 +250,7 @@ class Application {
         {
             if(!ORM\Schema::exists($schema_class))
             {                
-                if(ORM\Schema::create($schema_class))
-                {
-                    $schema_class::seed();
-                }
-                else 
+                if(!ORM\Schema::create($schema_class))
                 {
                     dd("Schema error");
                     // TODO: error management
