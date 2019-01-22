@@ -51,11 +51,7 @@ class Application {
 
         // prepare the database
         ORM\Database::prepare(
-            Config::get('database.type'),              // connector type
-            Config::get('database.hostname'),          // hostname
-            Config::get('database.name'),              // database
-            Config::get('database.username'),          // username
-            Config::get('database.password')           // password
+            Config::get('database.' . Config::get('database.active'))
         );
         // activate/deactivate debug mode
         ORM\Database::main()->error_reporting(config('app.debug_database_queries'));
@@ -264,8 +260,8 @@ class Application {
             array_push($this->route_paths, $path);
     }
 
-    public function loadViewsFrom($path, $namespace = null){
-        Template\View::namespace($path, $namespace);
+    public function loadViewsFrom($path, $namespace = '::'){
+        Template\View::namespace($namespace, $path);
     }
 
     public function registerSchema($schema_class){

@@ -36,14 +36,16 @@ function base_url($action = null, $params = array()){
 			$comma = '&';
 		}
 	}
-	return '/' . trim($action, '/') . $url_params;
+	$base = str_replace("index.php", "", $_SERVER["SCRIPT_NAME"]);
+	return $base . trim($action, '/') . $url_params;
 }
 
 // redirect function
 
-function redirect( $url, $code = 302, $condition = true ){
-	if ( !$condition )
-		return;
+function redirect($url, $data = array(), $code = 302){
+	if(!empty($data))
+		$url .= '?' . http_build_query($data);
+
 	@header( "Location: {$url}", true, $code );
 	exit;
 }
@@ -99,8 +101,8 @@ function router(){
 }
 
 // make a view
-function view($template_file){
-	Pure\Template\View::make($template_file);
+function view($template_file, $params = array()){
+	return Pure\Template\View::make($template_file, $params);
 }
 
 // var_dump alias
@@ -120,6 +122,18 @@ function outline($string = null){
 // http response
 function response($data){
 	echo json_encode($data);
+}
+
+// return the logged in user model
+function user(){
+	return Pure\Auth::user();
+}
+
+// object to associative array conversion
+function data($obj){
+	if(method_exists($obj, 'data')) return $obj->data();
+	if(is_array($obj)) return $obj;
+	return null;
 }
 
 ?>
