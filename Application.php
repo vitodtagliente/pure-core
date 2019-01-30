@@ -50,11 +50,11 @@ class Application {
         Auth::$class_name = Config::get('app.auth_class_name');
 
         // prepare the database
-        ORM\Database::prepare(
+        ORM\Database::prepare(new ORM\ConnectionSettings(
             Config::get('database.' . Config::get('database.active'))
-        );
+        ));
         // activate/deactivate debug mode
-        ORM\Database::main()->error_reporting(config('app.debug_database_queries'));
+        ORM\Query::error_reporting(config('app.debug_database_queries'));
 
         // run the application
         self::main()->run($shell_mode, $argv);

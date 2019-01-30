@@ -13,6 +13,10 @@ class DataModel
 	// insieme dei campi della tabella
 	private $properties = array();
 
+    public function __construct(array $args = array()){
+        $this->properties = $args;
+    }
+
 	public function __get($key){
         if(array_key_exists($key, $this->properties))
 		  return $this->properties[$key];
@@ -32,14 +36,18 @@ class DataModel
     }
 
     // ritorna il modello in formato array associativo
+    // DEPRECATED
     public function data(){
     	return $this->properties;
     }
+    public function getData(){ return $this->properties; }
 
     // ritorna la codifica json del modello
+    // DEPRECATED
     public function json(){
     	return json_encode($this->properties);
     }
+    public function getJson(){ return json_encode($this->properties); }
 
     // ritorna il modello in formato url GET
     public function url(){

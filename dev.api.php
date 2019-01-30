@@ -131,8 +131,19 @@ function user(){
 
 // object to associative array conversion
 function data($obj){
-	if(method_exists($obj, 'data')) return $obj->data();
-	if(is_array($obj)) return $obj;
+	if(empty($obj)) return null;
+	if(method_exists($obj, 'getData')) return $obj->getData();
+	if(is_array($obj)){	
+		if(is_object($obj[0]))
+		{
+			$records = array();
+			foreach ($obj as $o) {
+				array_push($records, data($o));
+			}
+			return $records;			
+		}
+		return $obj;
+	}
 	return null;
 }
 
