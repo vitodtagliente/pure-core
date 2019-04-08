@@ -131,7 +131,7 @@ function user(){
 
 // object to associative array conversion
 function data($obj){
-	if(empty($obj)) return null;
+	if(empty($obj)) return array();
 	if(method_exists($obj, 'getData')) return $obj->getData();
 	if(is_array($obj)){	
 		if(is_object($obj[0]))

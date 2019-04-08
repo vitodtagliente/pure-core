@@ -37,6 +37,11 @@ class Request {
       else return null;
     }
 
+    public static function exists($key){
+        $data = self::input($key);
+        return isset($data);
+    }
+
     private function __destruct(){}
 }
 

@@ -54,7 +54,7 @@ class Application {
             Config::get('database.' . Config::get('database.active'))
         ));
         // activate/deactivate debug mode
-        ORM\Query::error_reporting(config('app.debug_database_queries'));
+        ORM\Query::error_reporting(config('database.debug_queries'));
 
         // run the application
         self::main()->run($shell_mode, $argv);
