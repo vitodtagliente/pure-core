@@ -1,24 +1,25 @@
 <?php
 
-/*
- * Common application functions
- */
 
-// return
-// 1. the root path of the application
-// 2. a relative path to something inside the project
+/// Copyright (c) Vito Domenico Tagliente
+/// Common dev APIs
 
+/// Retrieve the root path of the application
+/// or the absoulte path to something passed that exists inside of the project
+/// @param path - The path to check
+/// @return - The path
 function base_path($path = null){
 	if(isset($path))
+	{
 		return getcwd() . '/' . trim($path, '/');
+	}
 	return getcwd();
 }
 
-// return a config variable
-// example: $app_title = config('app.title');
-// where app is the file root/app/config/app.php
-// and title is a variable inside this ini file
-
+/// Retrieve a config option
+/// @param option - The name of the option
+/// @param path - The path form which look for the config files
+/// @return - The option if exists
 function config($option, $path = null){
 	return Pure\Config::get($option, $path);
 }
@@ -40,33 +41,47 @@ function base_url($action = null, $params = array()){
 	return $base . trim($action, '/') . $url_params;
 }
 
-// redirect function
-
+/// Redirect
+/// @param url - The URL od destination
+/// @param data - The parameters to pass
+/// @param code - The status code
 function redirect($url, $data = array(), $code = 302){
 	if(!empty($data))
+	{
 		$url .= '?' . http_build_query($data);
+	}
 
 	@header( "Location: {$url}", true, $code );
 	exit;
 }
 
-// return the request input
-
-function request($key){
-	return Pure\Request::input($key);
+/// Retrieve a request parameter
+/// @param name - The name of the request variable
+/// @return - The value
+function request($name)
+{
+	return Pure\Request::input($name);
 }
 
-function get($key){
-	return Pure\Request::get($key);
+/// Retrieve a get variable
+/// @param name - The name of the get variable
+/// @return - The value of the variable
+function get($name)
+{
+	return Pure\Request::get($name);
 }
 
-function post($key){
-	return Pure\Request::post($key);
+/// Retrieve a post variable
+/// @param name - The name of the variable
+/// @return - The value of the variable
+function post($name)
+{
+	return Pure\Request::post($name);
 }
 
-// this function include all files with a specified extension
-// contained by a folder and all the subdirectories
-
+/// Include all the files under a given directory that have a specific extension
+/// @param directory - The directory to llok at
+/// @param extension - The extension to take care, php files by default
 function include_directory($directory, $extension = '.php') {
 	if(is_dir($directory))
 	{
@@ -90,61 +105,52 @@ function include_directory($directory, $extension = '.php') {
 	}
 }
 
-// return the application
+/// Retrieve the application
+/// @return - The application
 function app(){
 	return Pure\Application::main();
 }
 
-// return the router
+/// Retrieve the router
+/// @return - The router
 function router(){
 	return Pure\Routing\Router::main();
 }
 
-// make a view
+/// Make a view
+/// @param template_file - The template to be used
+/// @param params - The list of params of the view
+/// @return - The view
 function view($template_file, $params = array()){
 	return Pure\Template\View::make($template_file, $params);
 }
 
-// var_dump alias
+/// Debug a variable
+/// @param variable - The variable to examine
 function dd($variable){
 	var_dump($variable);
 }
 
-// commands printing functions
+/// Print a string in output
+/// @param string - the string to print out
 function out($string){
 	echo $string;
 }
 
+/// Print a line of characters
+/// @param string - The string to print out
 function outline($string = null){
 	echo $string . "\n";
 }
 
-// http response
+/// Generate an http response in json format
+/// @param data - The data to format and print
 function response($data){
 	echo json_encode($data);
 }
 
-// return the logged in user model
+/// Retrieve the user that is logged in
+/// @return - The user model
 function user(){
 	return Pure\Auth::user();
 }
-
-// object to associative array conversion
-function data($obj){
-	if(empty($obj)) return array();
-	if(method_exists($obj, 'getData')) return $obj->getData();
-	if(is_array($obj)){	
-		if(is_object($obj[0]))
-		{
-			$records = array();
-			foreach ($obj as $o) {
-				array_push($records, data($o));
-			}
-			return $records;			
-		}
-		return $obj;
-	}
-	return null;
-}
-
-?>
