@@ -9,7 +9,7 @@ class Session
 {
 	/// application's defined session security string
 	/// must be different per application
-	private static $session_string;
+	private static $s_sessionString;
 
 	/// constructor
     private function __construct()
@@ -28,7 +28,7 @@ class Session
 	static public function start($security_string = "pure.session.")
 	{
 		session_start();
-		self::$session_string = $security_string;
+		self::$s_sessionString = $security_string;
 	}
 
 	/// Set a session's variable
@@ -36,7 +36,7 @@ class Session
 	/// @param value - The new value
 	static public function set($key, $value)
 	{
-		$key = self::$session_string . $key;
+		$key = self::$s_sessionString . $key;
 		$obj = $value;
 		$obj = serialize($value);
 		$_SESSION[$key] = $obj;
@@ -47,7 +47,7 @@ class Session
 	/// @return The variable if found
 	static public function get($key)
 	{
-		$key = self::$session_string . $key;
+		$key = self::$s_sessionString . $key;
 		if (isset($_SESSION[$key]))
 		{
 			$obj = $_SESSION[$key];
@@ -61,7 +61,7 @@ class Session
 	/// @return true if exists
 	static public function exists($key)
 	{
-		$key = self::$session_string . $key;
+		$key = self::$s_sessionString . $key;
 		return (isset($_SESSION[$key]));
 	}
 
@@ -69,7 +69,7 @@ class Session
 	/// @param key - The name of the variable to be removed
 	static public function erase($key)
 	{
-		$key = self::$session_string . $key;
+		$key = self::$s_sessionString . $key;
 		if (isset($_SESSION[$key]))
 		{
 			unset($_SESSION[$key]);

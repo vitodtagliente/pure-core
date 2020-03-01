@@ -27,23 +27,23 @@ class Auth
     }
 
     /// The class name of the model used to represent the user
-    private static $model_name = null;
+    private static $s_modelClass = null;
 
     /// define the key used for model serialization
-    private static $session_key = 'user';
+    private static $s_sessionString = 'user';
 
     /// Check if the user is logged in
     /// @return - True if logged in
     public static function check()
     {
-        return Session::exists(self::$session_key);
+        return Session::exists(self::$s_sessionString);
     }
 
     /// Retrieve the user model if logged in
     /// @return - The user model
     public static function user()
     {
-        return Session::get(self::$session_key);
+        return Session::get(self::$s_sessionString);
     }
 
     /// Set or retrieve the User model class
@@ -53,9 +53,9 @@ class Auth
     {
         if (isset($class_name))
         {
-            self::$model_name = $class_name;
+            self::$s_modelClass = $class_name;
         }
-        return self::$model_name;
+        return self::$s_modelClass;
     }
 
     /// Perform the user authentication
@@ -65,15 +65,15 @@ class Auth
     public static function authenticate($condition, $remember = false)
     {
         // check if the user model class is specified
-        if (!empty(self::$model_name) && class_exists(self::$model_name))
+        if (class_exists(self::$s_modelClass))
         {
             // UserModelClass:find($condition)
             // call the find function using the given conditions
-            $user = call_user_func(self::$model_name . '::find', $condition);
+            $user = call_user_func(self::$s_modelClass . '::find', $condition);
             if ($user)
             {
                 // if an user is found, serialize it and push into the session
-                Session::set(self::$session_key, $user);
+                Session::set(self::$s_sessionString, $user);
                 return true;
             }
         }
@@ -83,6 +83,6 @@ class Auth
     /// Performs the logout operation
     public static function logout()
     {
-        Session::erase(self::$session_key);
+        Session::erase(self::$s_sessionString);
     }
 }

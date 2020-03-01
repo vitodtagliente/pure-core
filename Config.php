@@ -41,10 +41,10 @@ class Config
     }
 
     /// base path from which looking for config files
-    private static $base_path = null;
+    private static $s_basePath = null;
 
     /// cached configs data
-    private static $configs = array();
+    private static $s_configs = array();
 
     /// Both lets to set or retrieve the base path
     /// @param path - The new base path
@@ -53,9 +53,9 @@ class Config
     {
         if (!empty($path))
         {
-            self::$base_path = $path;
+            self::$s_basePath = $path;
         }
-        return self::$base_path;
+        return self::$s_basePath;
     }
 
     /// Retrieve a config option
@@ -71,7 +71,7 @@ class Config
             if (empty($path))
             {
                 // start looking from the base path
-                $path = self::$base_path;
+                $path = self::$s_basePath;
             }
 
             // split the string by the dot
@@ -83,7 +83,7 @@ class Config
             }
 
             // if the file is not cached, load the file
-            if (!array_key_exists($config_name, self::$configs))
+            if (!array_key_exists($config_name, self::$s_configs))
             {
                 // check if the file exists
                 $filename = $config_name . '.php';
@@ -92,15 +92,15 @@ class Config
                     $file_configs = include($filename);
                     if (isset($file_configs) && is_array($file_configs))
                     {
-                        self::$configs[$config_name] = $file_configs;
+                        self::$s_configs[$config_name] = $file_configs;
                     }
                 }
             }
 
             // return the option
-            if (array_key_exists($parts[1], self::$configs[$config_name]))
+            if (array_key_exists($parts[1], self::$s_configs[$config_name]))
             {
-                return self::$configs[$config_name][$parts[1]];
+                return self::$s_configs[$config_name][$parts[1]];
             }
         }
         return null;

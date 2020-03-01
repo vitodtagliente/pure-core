@@ -8,25 +8,25 @@ namespace Pure;
 abstract class Controller
 {
     /// singleton pattern
-    private static $instance = null;
+    private static $s_instance = null;
 
     /// constructor
     public function __construct()
     {
-        self::$instance = $this;
+        self::$s_instance = $this;
     }
 
     /// destructor
     public function __destruct()
     {
-        self::$instance = null;
+        self::$s_instance = null;
     }
 
     /// singleton pattern
     /// @return - The singleton of the class
     public static function main()
     {
-        return self::$instance;
+        return self::$s_instance;
     }
 
     /// Retrieve the default action for this controller

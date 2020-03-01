@@ -9,22 +9,22 @@ use Pure\Routing\Router;
 class Application
 {
     /// singleton pattern
-    private static $instance = null;
+    private static $s_instance = null;
 
     /// the list of services of the application
-    private $services = array();
+    private $m_services = array();
 
     // paths where to find routes
-    private $route_paths = array();
+    private $m_routePaths = array();
 
     // Array of classes of schemas
-    private $schemas = array();
+    private $m_schemas = array();
 
     // Express the state of the application
-    private $running = false;
+    private $m_isRunning = false;
 
     // error handler function
-    public $routing_error_handler = null;
+    public $m_errorHandler = null;
 
     /// construct
     private function __construct()
@@ -70,10 +70,10 @@ class Application
     /// @return - The main instance of the application
     public static function main()
     {
-        if (!isset(self::$instance)) {
-            self::$instance = new Application;
+        if (!isset(self::$s_instance)) {
+            self::$s_instance = new Application;
         }
-        return self::$instance;
+        return self::$s_instance;
     }
 
     /// Run the application
@@ -82,10 +82,10 @@ class Application
     private function run($shell_mode = false, $argv = array())
     {
         // run the application only one time
-        if ($this->running) return;
+        if ($this->m_isRunning) return;
 
         // update the application state
-        $this->running = true;
+        $this->m_isRunning = true;
 
         // boot the application and services
         $this->boot();
@@ -95,7 +95,7 @@ class Application
 
         // load routes
         $this->loadRoutesFrom('app/Routes');
-        foreach ($this->route_paths as $path) {
+        foreach ($this->m_routePaths as $path) {
             include_directory($path, '.php');
         }
 
@@ -114,8 +114,8 @@ class Application
             if (isset($router)) {
                 if (!$router->dispatch()) {
                     // Error, route not found
-                    if (is_callable($this->routing_error_handler))
-                        call_user_func($this->routing_error_handler);
+                    if (is_callable($this->m_errorHandler))
+                        call_user_func($this->m_errorHandler);
                     else echo "Error, route not found!";
                 }
             }
@@ -178,13 +178,13 @@ class Application
             {
                 $service = instantiate_if($service_class, '\Pure\Service');
                 if($service) {
-                    array_push($this->services, $service);
+                    array_push($this->m_services, $service);
                 }
             }
         }
 
         // boot services
-        foreach ($this->services as $service)
+        foreach ($this->m_services as $service)
         {
             $service->boot();
         }
@@ -193,7 +193,7 @@ class Application
     /// Start all the services
     private function start()
     {
-        foreach ($this->services as $service)
+        foreach ($this->m_services as $service)
         {
             $service->start();
         }
@@ -202,7 +202,7 @@ class Application
     /// Stop all the services
     private function stop()
     {
-        foreach ($this->services as $service)
+        foreach ($this->m_services as $service)
         {
             $service->stop();
         }
@@ -211,7 +211,7 @@ class Application
     private function loadSchemas()
     {
         // load schemas from app.php and from registered classes
-        $schema_classes = array_merge($this->schemas, Config::get('app.schemas'));
+        $schema_classes = array_merge($this->m_schemas, Config::get('app.schemas'));
 
         // $schema_classes should be an array
         if (empty($schema_classes) || !is_array($schema_classes))
@@ -229,8 +229,8 @@ class Application
 
     public function loadRoutesFrom($path)
     {
-        if (in_array($path, $this->route_paths) == false)
-            array_push($this->route_paths, $path);
+        if (in_array($path, $this->m_routePaths) == false)
+            array_push($this->m_routePaths, $path);
     }
 
     public function loadViewsFrom($path, $namespace = '::')
@@ -242,7 +242,7 @@ class Application
     public function registerSchema($schema_class)
     {
         if (class_exists($schema_class)) {
-            array_push($this->schemas, $schema_class);
+            array_push($this->m_schemas, $schema_class);
         }
     }
 }
