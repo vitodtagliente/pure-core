@@ -11,6 +11,21 @@ class Application
     /// singleton pattern
     private static $instance = null;
 
+    /// the list of services of the application
+    private $services = array();
+
+    // paths where to find routes
+    private $route_paths = array();
+
+    // Array of classes of schemas
+    private $schemas = array();
+
+    // Express the state of the application
+    private $running = false;
+
+    // error handler function
+    public $routing_error_handler = null;
+
     /// construct
     private function __construct()
     {
@@ -55,29 +70,16 @@ class Application
     /// @return - The main instance of the application
     public static function main()
     {
-        if (!isset(self::$instance))
-        {
+        if (!isset(self::$instance)) {
             self::$instance = new Application;
         }
         return self::$instance;
     }
 
-    // application services
-    private $services = array();
-
-    // paths where to find routes
-    private $route_paths = array();
-
-    // application schemas: array of classes
-    private $schemas = array();
-
-    // the application running state
-    private $running = false;
-
-    // error handler function
-    public $routing_error_handler = null;
-
-    public function run($shell_mode = false, $argv = array())
+    /// Run the application
+    /// @param shell_mode - The mode of execution of the application
+    /// @param argv - The list of arguments
+    private function run($shell_mode = false, $argv = array())
     {
         // run the application only one time
         if ($this->running) return;
@@ -164,18 +166,19 @@ class Application
         else $cmd_object->execute($arguments);
     }
 
-    // boot the application and services
+    /// boot the application and services
+    /// Instantiate all the services
     private function boot()
     {
-        // load service classes by the config, instantiate here
+        // load service classes by the config and instantiate them
         $services_classes = config('app.services');
-        if (!empty($services_classes) && is_array($services_classes)) {
-            foreach ($services_classes as $service_class) {
-                if (class_exists($service_class)) {
-                    $service = new $service_class;
-                    if ($service && is_a($service, '\Pure\Service')) {
-                        array_push($this->services, $service);
-                    }
+        if (is_array($services_classes))
+        {
+            foreach ($services_classes as $service_class)
+            {
+                $service = instantiate_if($service_class, '\Pure\Service');
+                if($service) {
+                    array_push($this->services, $service);
                 }
             }
         }
@@ -235,8 +238,11 @@ class Application
         Template\View::namespace($namespace, $path);
     }
 
+    /// Register a new Schema
     public function registerSchema($schema_class)
     {
-        array_push($this->schemas, $schema_class);
+        if (class_exists($schema_class)) {
+            array_push($this->schemas, $schema_class);
+        }
     }
 }

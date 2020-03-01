@@ -17,7 +17,7 @@ class DataModel
     public function __construct(array $args = array())
     {
         // check if the array is an associative one
-        if (array_keys($args) !== range(0, count($args) - 1)) {
+        if (is_associative_array($args)) {
             $this->properties = $args;
         }
     }

@@ -154,3 +154,35 @@ function response($data){
 function user(){
 	return Pure\Auth::user();
 }
+
+/// Check is a variable is an associative array
+/// @param variable - The variable to check
+/// @return - True if the variable is an associative array
+function is_associative_array($variable)
+{
+    return array_keys($variable) !== range(0, count($variable) - 1);
+}
+
+/// Instantiate an object of a given class if the class exists
+/// @param classname - The name of the class
+/// @return - The object if the class exists
+function instantiate($classname)
+{
+    if (class_exists($classname)) {
+        return new $classname;
+    }
+    return null;
+}
+
+/// Instantiate an object of a given class check the class hierarchy
+/// @param classname - The name of the class
+/// @param parent_classname - The name of the parent class
+/// @return - The object if the class exists
+function instantiate_if($classname, $parent_classname)
+{
+    $object = instantiate($classname);
+    if($object && is_a($object, $parent_classname)) {
+        return $object;
+    }
+    return null;
+}
