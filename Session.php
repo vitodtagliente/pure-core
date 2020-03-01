@@ -1,55 +1,90 @@
 <?php
 
-/*
-	Questa classe permette l'avvio della sessione e la gestione
-	delle relative variabili. 
-*/
+/// Copyright (c) Vito Domenico Tagliente
+/// Session manager
 
 namespace Pure;
 
-class Session {
+class Session
+{
+	/// application's defined session security string
+	/// must be different per application
 	private static $session_string;
 
-	static public function start( $security_string = "pure.session." ){
+	/// constructor
+    private function __construct()
+    {
+
+    }
+
+    /// destructor
+    private function __destruct()
+    {
+
+    }
+
+    /// Starts the session and set the session string
+	/// @param $security_string - The string that will be used to identity the application's sessions
+	static public function start($security_string = "pure.session.")
+	{
 		session_start();
 		self::$session_string = $security_string;
 	}
 
-	static public function set( $key, $value ){
+	/// Set a session's variable
+	/// @param key - The name of the session's variable
+	/// @param value - The new value
+	static public function set($key, $value)
+	{
 		$key = self::$session_string . $key;
 		$obj = $value;
-		$obj = serialize( $value );
-		$_SESSION[ $key ] = $obj;
+		$obj = serialize($value);
+		$_SESSION[$key] = $obj;
 	}
 
-	static public function get( $key){
+	/// Retrieve a session's variable
+	/// @param key - The name of the variable
+	/// @return The variable if found
+	static public function get($key)
+	{
 		$key = self::$session_string . $key;
-		if( isset( $_SESSION[ $key ] ) ){
-			$obj = $_SESSION[ $key ];
-			return $obj = unserialize( $_SESSION[ $key ] );
+		if (isset($_SESSION[$key]))
+		{
+			$obj = $_SESSION[$key];
+			return $obj = unserialize($_SESSION[$key]);
 		}
 		else return null;
 	}
 
-	static public function exists( $key ){
+	/// Check if a variable is already stored in the session
+	/// @param key - the name of the variable
+	/// @return true if exists
+	static public function exists($key)
+	{
 		$key = self::$session_string . $key;
-		return ( isset( $_SESSION[ $key ] ) );
+		return (isset($_SESSION[$key]));
 	}
 
-	static public function erase( $key ){
+	/// remove a variable from the session
+	/// @param key - The name of the variable to be removed
+	static public function erase($key)
+	{
 		$key = self::$session_string . $key;
-		if( isset( $_SESSION[ $key ] ) )
-			unset( $_SESSION[ $key ] );
+		if (isset($_SESSION[$key]))
+		{
+			unset($_SESSION[$key]);
+		}
 	}
 
-	static public function clear(){
+	/// Clear all the stored variabled from the session
+	static public function clear()
+	{
 		session_unset();
 	}
 
-	static public function close(){
+	/// Close the session
+	static public function close()
+	{
 		session_destroy();
 	}
-
 }
-
-?>

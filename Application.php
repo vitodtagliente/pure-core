@@ -1,5 +1,7 @@
 <?php
 
+/// Copyright (c) Vito Domenico Tagliente
+
 /*
     Questa classe modella l'applicazione. Implementa il pattern singleton,
     pertanto si avrà una sola instanza attiva, ottenibile con la funzione
@@ -268,5 +270,3 @@ class Application {
         array_push($this->schemas, $schema_class);
     }
 }
-
-?>

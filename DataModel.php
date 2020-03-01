@@ -1,58 +1,81 @@
 <?php
 
-/*
-	Questa classe permette la rappresentazione generale
-	di modelli di dati che possono essere agilmente manipolati 
-	e trasformati in rappresentazioni equivalenti
-*/
+/// Copyright (c) Vito Domenico Tagliente
+/// Generica data model definition
+/// Used to define veratile data that can be formatted in different output formats
+/// such as json or URL
 
 namespace Pure;
 
 class DataModel
 {
-	// insieme dei campi della tabella
-	private $properties = array();
+    /// The properties of the model
+    private $properties = array();
 
-    public function __construct(array $args = array()){
-        $this->properties = $args;
+    /// constructor
+    /// @param args - The array or properties
+    public function __construct(array $args = array())
+    {
+        // check if the array is an associative one
+        if (array_keys($args) !== range(0, count($args) - 1)) {
+            $this->properties = $args;
+        }
     }
 
-	public function __get($key){
-        if(array_key_exists($key, $this->properties))
-		  return $this->properties[$key];
+    /// Retrieve a property of the model
+    /// @param name - The name of the property
+    /// @return - The property is exists
+    public function __get($name)
+    {
+        if (array_key_exists($name, $this->properties))
+        {
+            return $this->properties[$name];
+        }
         return null;
-	}
-
-	public function __set( $key, $value){
-		$this->properties[$key] = $value;
-	}
-
-    public function __isset($key){
-        return isset($this->properties[$key]);
     }
 
-    public function keys(){
-    	return array_keys($this->properties);
+    /// Set a property of the model
+    /// @param name - The name of the property
+    /// @param value - The value of the property
+    public function __set($name, $value)
+    {
+        $this->properties[$name] = $value;
     }
 
-    // ritorna il modello in formato array associativo
-    // DEPRECATED
-    public function data(){
-    	return $this->properties;
+    /// Implementation for the isset standard.
+    /// Check if a property exists.
+    /// @param name - the name of the property
+    /// @return - true if the property exists.
+    public function __isset($name)
+    {
+        return isset($this->properties[$name]);
     }
-    public function getData(){ return $this->properties; }
 
-    // ritorna la codifica json del modello
-    // DEPRECATED
-    public function json(){
-    	return json_encode($this->properties);
+    /// Retrieve the properties names
+    /// @return - The properties name's list
+    public function keys()
+    {
+        return array_keys($this->properties);
     }
-    public function getJson(){ return json_encode($this->properties); }
 
-    // ritorna il modello in formato url GET
-    public function url(){
-    	return http_build_query($this->properties);
+    /// Retrieve the array representation
+    /// @return - the model in associative array format
+    public function toArray()
+    {
+        return $this->properties;
+    }
+
+    /// Retrieve the json representation
+    /// @return - The model in json format
+    public function toJson()
+    {
+        return json_encode($this->properties);
+    }
+
+    /// Retrieve the URL representation
+    /// @return - The model in URL format
+    public function toURL()
+    {
+        return http_build_query($this->properties);
     }
 }
-
-?>

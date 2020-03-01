@@ -1,5 +1,9 @@
 <?php
 
+/// Copyright (c) Vito Domenico Tagliente
+/// Authentication utility
+/// This
+
 /*
 	API di autenticazione
 	Questa interfaccia permette di eseguire le operazioni di autenticazione.
@@ -14,46 +18,55 @@ namespace Pure;
 
 class Auth
 {
-	private function __construct(){}
-	private function __destruct(){}
+    /// private constructor
+    private function __construct()
+    {
+    }
 
-	// authentication model class_name
-	public static $class_name = null;
-	// define the key used for model serialization
-	private static $session_key = 'user';
+    /// private destructor
+    private function __destruct()
+    {
+    }
 
-	// returns true if the user is logged in
-	public static function check(){
-		return Session::exists(self::$session_key);
-	}
+    // authentication model class_name
+    public static $class_name = null;
+    // define the key used for model serialization
+    private static $session_key = 'user';
 
-	// returns the user model
-	public static function user(){
-		return Session::get(self::$session_key);
-	}
+    // returns true if the user is logged in
+    public static function check()
+    {
+        return Session::exists(self::$session_key);
+    }
 
-	// performs the authentication operation
-	public static function authenticate($condition, $remember = false){
-		// check if the user model class is specified
-		if(!empty(self::$class_name) && class_exists(self::$class_name))
-		{
-			// UserModelClass:find($condition)
-			// call the find function using the given conditions
-			$user = call_user_func(self::$class_name . '::find', $condition);
-			if($user)
-			{
-				// if an user is found, serialize it and push into the session
-				Session::set(self::$session_key, $user);
-				return true;
-			}
-		}
-		return false;
-	}
+    // returns the user model
+    public static function user()
+    {
+        return Session::get(self::$session_key);
+    }
 
-	// performs the logout operation
-	public static function logout(){
-		Session::erase(self::$session_key);
-	}
+    // performs the authentication operation
+    public static function authenticate($condition, $remember = false)
+    {
+        // check if the user model class is specified
+        if (!empty(self::$class_name) && class_exists(self::$class_name))
+        {
+            // UserModelClass:find($condition)
+            // call the find function using the given conditions
+            $user = call_user_func(self::$class_name . '::find', $condition);
+            if ($user)
+            {
+                // if an user is found, serialize it and push into the session
+                Session::set(self::$session_key, $user);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // performs the logout operation
+    public static function logout()
+    {
+        Session::erase(self::$session_key);
+    }
 }
-
-?>

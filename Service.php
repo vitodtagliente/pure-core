@@ -1,22 +1,18 @@
 <?php
 
-/*
-	Interfaccia base per la definizione dei servizi dell'applicazione.
-	- La fase di boot è eseguita all'avvio dell'applicazione, quando tutte le
-	  API sono inizializzate ed la connessione al database viene stabilita.
-	- La fase di start è eseguita prima di eseguire dispatch delle rotte.
-	- La fase di stop viene eseguita all'arresto dell'applicazione.
-*/
+/// Copyright (c) Vito Domenico Tagliente
+/// Generic Service interface
 
 namespace Pure;
 
 abstract class Service
 {
+	/// Executed after the application initialization
 	abstract function boot();
 
+	/// Executed before the routing dispatch
 	abstract function start();
 
+	/// Executed when the application is going to be closed
 	abstract function stop();
 }
-
-?>

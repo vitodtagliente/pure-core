@@ -1,22 +1,18 @@
 <?php
 
-/*
-    Interfaccia base per la definizione di comandi console per l'applicazione.
-    Ogni comando console è caratterizzato da:
-    - una funzione di esecuzione 'execute', che presenta comportamenti
-    differenti in base al numero e al tipo di parametri utilizzati.
-    - una funzione di aiuto 'help' per la stampa su terminale della
-    guida d'utilizzo
-*/
+/// Copyright (c) Vito Domenico Tagliente
+/// Generic Application Command interface
 
 namespace Pure;
 
-abstract class Command {
-
+abstract class Command
+{
+    /// Used to execute the command
+    /// @param arguments - The array of parameters
+    /// @return true if succeed
     public abstract function execute($arguments);
 
+    /// Used to retrieve the command documentation
+    /// @return - The documentation string
     public abstract function help();
-
 }
-
-?>

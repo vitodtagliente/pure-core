@@ -1,98 +1,108 @@
 <?php
 
-/*
-	Questa classe permette l'accesso alle configurazioni dell'applicazione
-	specificate nei fili .ini situati in: path/app/Config.
-	Il path base da cui prelevare i file di configurazione può essere specificato
-	utilizzando la function path($new_path).
-	Come funziona?
-	Si tratta di una classe statica avente un solo metodo, get($option_name).
-	$option_name deve essere formattato nel seguente metodo:
-		nome_file_php.nome_opzione
-	I file, alla prima richiesta di caricamento, vengono salvati in memoria,
-	così da evitare nuove letture da file ai successivi accessi al medesimo
-	set di configurazioni.
-
-	Consideriamo un esempio:
-	il file path/app/Config/app.php contiene diverse opzioni
-
-	----------- app.php -----------
-	return array(
-		'one' => 1,
-		'key' => 'stringa'
-	);
-	-------------------------------
-
-	Per accedere alle opzioni del file app.php basta richiamare la funzione get
-	nel modo seguente:
-	$one = Pure\Config::get('app.one');
-	$key = Pure\Config::get('app.key');
-
-	In caso di errore verrà ritornato il valore null.
-*/
+/// Copyright (c) Vito Domenico Tagliente
+///
+/// This utility is able to parse config files and return options.
+/// It is possible to set a base path form which look at for config files.
+/// When the get method is called, the option name parameter should be formatted using
+/// the following syntax: filename_without_php.option_name
+/// The system will look for the file: base_path/filename_without_php.php. If the file exists,
+/// it will be loaded in memory with all of its options.
+/// This will let the system to cache data and avoid multiple readings ffrom files.
+///
+/// --------------------------------------------------------------
+/// Example:
+/// Define a file located at: path/app/Config/app.php as following:
+///
+/// return array(
+///		'one' => 1,
+///		'key' => 'stringa'
+///	);
+///
+/// The options can be retrieved as following:
+///
+/// $one = Pure\Config::get('app.one');
+///	$key = Pure\Config::get('app.key');
+///
+/// Null is retrieved in cases in which options are not found.
 
 namespace Pure;
 
 class Config
 {
-	private function __construct(){}
-	private function __destruct(){}
+    /// constructor
+    private function __construct()
+    {
+    }
 
-	// base path from which find config files
-	private static $base_path = null;
+    /// destructor
+    private function __destruct()
+    {
+    }
 
-	// configs caching
-	private static $configs = array();
+    /// base path from which looking for config files
+    private static $base_path = null;
 
-	// this let changing the base path
-	public static function path($path = null){
-		if(empty($path))
-			return self::$base_path;
-		self::$base_path = $path;
-	}
+    /// cached configs data
+    private static $configs = array();
 
-	// retrieve a config option
-	// returns null for errors
-	public static function get($option_name, $path = null)
-	{
-		$parts = explode('.', $option_name);
-		// Does the option_name contain the dot?
-		if(count($parts) > 1)
-		{
-			if(empty($path))
-				$path = self::$base_path;
+    /// Both lets to set or retrieve the base path
+    /// @param path - The new base path
+    /// @return - The base path
+    public static function path($path = null)
+    {
+        if (!empty($path))
+        {
+            self::$base_path = $path;
+        }
+        return self::$base_path;
+    }
 
-			// split the string by the dot
-			$config_name = $parts[0];
-			if (strpos($config_name, '/') !== false) {
-		    	// it is an absolute path
-			}
-			// it is a relative path, add the base path to the config name
-			else $config_name = $path . '/' . $config_name;
+    /// Retrieve a config option
+    /// @param name - The name of the option
+    /// @param path - The path form wich looking for the config file, if null the base path will be used
+    /// @return - The option if found. Null if not.
+    public static function get($name, $path = null)
+    {
+        $parts = explode('.', $name);
+        // Does the option_name contain the dot?
+        if (count($parts) > 1)
+        {
+            if (empty($path))
+            {
+                // start looking from the base path
+                $path = self::$base_path;
+            }
 
-			// if the file is not cached, load the file
-			if(!array_key_exists($config_name, self::$configs))
-			{
-				// check if the file exists
-				$filename = $config_name . '.php';
-				if(file_exists($filename))
-				{
-					$file_configs = include($filename);
-					if(isset($file_configs) && is_array($file_configs))
-					{
-						self::$configs[$config_name] = $file_configs;
-					}
-				}
-			}
+            // split the string by the dot
+            $config_name = $parts[0];
+            if (!(strpos($config_name, '/') !== false))
+            {
+                // it is a relative path, add the base path to the config name
+                $config_name = $path . '/' . $config_name;
+            }
 
-			// return the option
-			if(array_key_exists($parts[1], self::$configs[$config_name]))
-			{
-				return self::$configs[$config_name][$parts[1]];
-			}
-		}
-		return null;
-	}
+            // if the file is not cached, load the file
+            if (!array_key_exists($config_name, self::$configs))
+            {
+                // check if the file exists
+                $filename = $config_name . '.php';
+                if (file_exists($filename))
+                {
+                    $file_configs = include($filename);
+                    if (isset($file_configs) && is_array($file_configs))
+                    {
+                        self::$configs[$config_name] = $file_configs;
+                    }
+                }
+            }
+
+            // return the option
+            if (array_key_exists($parts[1], self::$configs[$config_name]))
+            {
+                return self::$configs[$config_name][$parts[1]];
+            }
+        }
+        return null;
+    }
 }
-
-?>
