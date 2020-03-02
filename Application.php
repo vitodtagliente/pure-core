@@ -56,8 +56,6 @@ class Application
         ORM\Database::prepare(new ORM\ConnectionSettings(
             Config::get('database.' . Config::get('database.active'))
         ));
-        // activate/deactivate debug mode
-        ORM\Query::error_reporting(config('database.debug_queries'));
 
         // run the application
         self::main()->run($shell_mode, $argv);
@@ -218,7 +216,8 @@ class Application
             return;
 
         foreach ($schema_classes as $schema_class) {
-            if (!ORM\Schema::exists($schema_class)) {
+            $table = $schema_class::table();
+            if (!ORM\Schema::exists($table)) {
                 if (!ORM\Schema::create($schema_class)) {
                     dd("Schema error");
                     // TODO: error management
